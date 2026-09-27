@@ -1,4 +1,4 @@
-#include "API\vector.h"
+#include "..\API\vector.h"
 
 
 struct Vector
@@ -9,9 +9,24 @@ struct Vector
     size_t _element_size;
 };
 
-Vector *vector_create(size_t size, size_t element_size)
+size_t Vector_GetSize(const Vector *v)
 {
-    Vector *v = ds_malloc(sizeof(Vector));
+    return v->_size;
+}
+
+size_t Vector_GetCapacity(const Vector *v)
+{
+    return v->_capaicity;
+}
+
+size_t Vector_GetElementSize(const Vector *v)
+{
+    return v->_element_size;
+}
+
+Vector *Vector_Create(size_t size, size_t element_size)
+{
+    Vector *v = (Vector *)ds_malloc(sizeof(Vector));
     if (v != NULL)
     {
         v->_data = ds_malloc(size * element_size);
@@ -33,3 +48,13 @@ Vector *vector_create(size_t size, size_t element_size)
     
     return v;
 }
+
+
+void *Vector_GetAt(Vector *v, size_t index)
+{
+    if (v == NULL || v->_data == NULL || index >= v->_capaicity)
+        return NULL;
+
+    return (char *)v->_data + (index * v->_element_size);
+}
+
