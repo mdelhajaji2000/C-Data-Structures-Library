@@ -22,7 +22,7 @@ int main()
 
 
     printf("Program End..!\n");
-    ds_free(v);
+    Vector_Clear(v);
     
     return 0;
 }

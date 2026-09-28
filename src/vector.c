@@ -15,29 +15,29 @@ struct Vector
     size_t _element_size;
 };
 
-static bool _Is_Vector_Valid(Vector *v)
+static bool _Is_Vector_Valid(const Vector *v)
 {
-    return ((v == NULL) ? false : true );
+    return v != NULL;
 }
 
 size_t Vector_GetSize(const Vector *v)
 {
-    if (_Is_Vector_Valid(v))
-        return -1;
+    if (!_Is_Vector_Valid(v))
+        return 0;
     return v->_size;
 }
 
 size_t Vector_GetCapacity(const Vector *v)
 {
-    if (_Is_Vector_Valid)
-        return -1;
+    if (!_Is_Vector_Valid(v))
+        return 0;
     return v->_capacity;
 }
 
 size_t Vector_GetElementSize(const Vector *v)
 {
-    if (_Is_Vector_Valid)
-        return -1;
+    if (!_Is_Vector_Valid(v))
+        return 0;
     return v->_element_size;
 }
 
