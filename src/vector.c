@@ -1,6 +1,9 @@
 #include <string.h>
-
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include "..\API\vector.h"
+#include "..\memory\memory.h"
 
 
 
@@ -12,18 +15,29 @@ struct Vector
     size_t _element_size;
 };
 
+static bool _Is_Vector_Valid(Vector *v)
+{
+    return ((v == NULL) ? false : true );
+}
+
 size_t Vector_GetSize(const Vector *v)
 {
+    if (_Is_Vector_Valid(v))
+        return -1;
     return v->_size;
 }
 
 size_t Vector_GetCapacity(const Vector *v)
 {
+    if (_Is_Vector_Valid)
+        return -1;
     return v->_capacity;
 }
 
 size_t Vector_GetElementSize(const Vector *v)
 {
+    if (_Is_Vector_Valid)
+        return -1;
     return v->_element_size;
 }
 
@@ -32,6 +46,11 @@ Vector *Vector_Create(size_t size, size_t element_size)
     if (element_size == 0)
     {
         fprintf(stderr, "[ERROR] at [Vector_Create] : INVALID ARGUMENT {require : element_size > 0}");
+        return NULL;
+    }
+    if (size > SIZE_MAX / element_size)
+    {
+        fprintf(stderr, "[ERROR] at [Vector_Create] : ALLOCATION SIZE OVERFLOW\n");
         return NULL;
     }
     Vector *v = (Vector *)ds_malloc(sizeof(Vector));
@@ -109,7 +128,19 @@ VectorStatus Vector_SetAt(Vector *v, size_t index, void* value)
 
 static VectorStatus _Vector_resize(Vector *v)
 {
-    size_t _new_capacity = (v->_capacity == 0) ? 1 : v->_capacity * 2;
+    size_t _new_capacity;
+    if (v->_capacity == 0)
+        _new_capacity = 1;
+    else
+    {
+        if (v->_capacity > SIZE_MAX / 2)
+            return VECTOR_REALLOCATION_FAILURE;
+        _new_capacity = v->_capacity * 2;
+    }
+
+    if (_new_capacity > SIZE_MAX / v->_element_size)
+        return VECTOR_REALLOCATION_FAILURE;
+
     void* _new_data = ds_realloc(v->_data, _new_capacity * v->_element_size);
     if (_new_data != NULL)
     {
@@ -165,4 +196,13 @@ VectorStatus Vector_PushBack(Vector *v, void* value)
 
     v->_size++;
     return VECTOR_SUCCESS;
+}
+
+void Vector_Clear(Vector *v)
+{
+    if (v == NULL)
+        return;
+
+    ds_free(v->_data);
+    ds_free(v);
 }

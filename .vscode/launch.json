@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/mdelh/OneDrive/Desktop/My-Github/C-Data-Structures-Library/tests",
-      "program": "c:/Users/mdelh/OneDrive/Desktop/My-Github/C-Data-Structures-Library/tests/build/Debug/outDebug",
+      "cwd": "c:/Users/mdelh/OneDrive/Desktop/My-Github/C-Data-Structures-Library/src",
+      "program": "c:/Users/mdelh/OneDrive/Desktop/My-Github/C-Data-Structures-Library/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

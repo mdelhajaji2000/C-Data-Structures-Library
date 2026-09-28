@@ -2,27 +2,27 @@
 #include "../API/vector.h"
 
 
-int main(void)
+int main()
 {
     printf("Program started\n");
-    Vector *v = (Vector *)Vector_Create(10, sizeof(int));
+    Vector* v = (Vector *)Vector_Create(10, sizeof(int));
     
-    printf("Element size is : %d\n", Vector_GetElementSize(v));
-    printf("Capacity is : %d\n", Vector_GetCapacity(v));
-    printf("Size is : %d\n", Vector_GetSize(v));
-    printf("---------------------------\n");
+    for (int i = 0; i < 10; i++)
+    {
+        Vector_PushBack(v, &(int){i});
+    }
 
-    //*((int *)Vector_GetAt(v, 5)) = 12123; */
-    //printf("Program reach here..!");
+    *((int *)Vector_GetAt(v, 5)) = 3333;
 
-    Vector_SetAt(v, 5, &(int){13});
+    printf("Vector Elements : \n");
+    for (int i = 0 ; i < 10; i++)
+    {
+        printf("v[%d] = %d\n", i, *((int *)Vector_GetAt(v, i)));
+    }
 
-    printf("getting Element at index = 5 : \n");
-    printf("v[5] = %d\n", *(int *)Vector_GetAt(v, 5));
 
-
-
-    printf("Program End..!");
+    printf("Program End..!\n");
+    ds_free(v);
     
     return 0;
 }
