@@ -10,7 +10,8 @@ typedef enum
     VECTOR_INVALID_ARGUMENT = -3,
     VECTOR_INDEX_OUT_OF_RANGE = -4,
     VECTOR_REALLOCATION_FAILURE = -5,
-    VECTOR_SIZE_OVERFLOW = -6
+    VECTOR_SIZE_OVERFLOW = -6,
+    VECTOR_EMPTY = -7
 } VectorStatus;
 
 typedef struct Vector Vector;
@@ -24,3 +25,5 @@ void *Vector_GetAt(Vector *v, size_t index);
 VectorStatus Vector_SetAt(Vector *v, size_t index, void *value);
 VectorStatus Vector_PushBack(Vector *v, void *value);
 void Vector_Clear(Vector *v);
+void Vector_Destroy(Vector *v);
+VectorStatus Vector_PopBack(Vector *v);

@@ -15,6 +15,41 @@ struct Vector
     size_t _element_size;
 };
 
+#define _VECTOR_STATUS_PRINTER(status, function_name)                  \
+    do                                                                 \
+    {                                                                  \
+        switch (status)                                                \
+        {                                                              \
+        case VECTOR_SUCCESS:                                           \
+            fprintf(stderr, "[INFO] at [%s]: SUCCESS\n", function_name); \
+            break;                                                     \
+        case VECTOR_ALLOCATION_FAILURE:                                \
+            fprintf(stderr, "[ERROR] at [%s]: ALLOCATION FAILURE\n", function_name); \
+            break;                                                     \
+        case VECTOR_DATA_ALLOCATION_FAILURE:                           \
+            fprintf(stderr, "[ERROR] at [%s]: DATA ALLOCATION FAILURE\n", function_name); \
+            break;                                                     \
+        case VECTOR_INVALID_ARGUMENT:                                   \
+            fprintf(stderr, "[ERROR] at [%s]: INVALID ARGUMENT\n", function_name); \
+            break;                                                     \
+        case VECTOR_INDEX_OUT_OF_RANGE:                                \
+            fprintf(stderr, "[ERROR] at [%s]: INDEX OUT OF RANGE\n", function_name); \
+            break;                                                     \
+        case VECTOR_REALLOCATION_FAILURE:                              \
+            fprintf(stderr, "[ERROR] at [%s]: REALLOCATION FAILURE\n", function_name); \
+            break;                                                     \
+        case VECTOR_SIZE_OVERFLOW:                                      \
+            fprintf(stderr, "[ERROR] at [%s]: SIZE OVERFLOW\n", function_name); \
+            break;                                                     \
+        case VECTOR_EMPTY:                                              \
+            fprintf(stderr, "[ERROR] at [%s]: VECTOR IS EMPTY\n", function_name); \
+            break;                                                     \
+        default:                                                       \
+            fprintf(stderr, "[ERROR] at [%s]: UNKNOWN VECTOR STATUS\n", function_name); \
+            break;                                                     \
+        }                                                              \
+    } while (0)
+
 static bool _Is_Vector_Valid(const Vector *v)
 {
     return v != NULL;
@@ -23,21 +58,30 @@ static bool _Is_Vector_Valid(const Vector *v)
 size_t Vector_GetSize(const Vector *v)
 {
     if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_GetSize");
         return 0;
+    }
     return v->_size;
 }
 
 size_t Vector_GetCapacity(const Vector *v)
 {
     if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_GetCapacity");
         return 0;
+    }
     return v->_capacity;
 }
 
 size_t Vector_GetElementSize(const Vector *v)
 {
     if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_GetElementSize");
         return 0;
+    }
     return v->_element_size;
 }
 
@@ -45,12 +89,12 @@ Vector *Vector_Create(size_t size, size_t element_size)
 {
     if (element_size == 0)
     {
-        fprintf(stderr, "[ERROR] at [Vector_Create] : INVALID ARGUMENT {require : element_size > 0}");
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_Create");
         return NULL;
     }
     if (size > SIZE_MAX / element_size)
     {
-        fprintf(stderr, "[ERROR] at [Vector_Create] : ALLOCATION SIZE OVERFLOW\n");
+        _VECTOR_STATUS_PRINTER(VECTOR_SIZE_OVERFLOW, "Vector_Create");
         return NULL;
     }
     Vector *v = (Vector *)ds_malloc(sizeof(Vector));
@@ -77,12 +121,12 @@ Vector *Vector_Create(size_t size, size_t element_size)
         {
             ds_free(v);
             v = NULL;
-            fprintf(stderr, "[ERROR] at [Vector_Create] : VECTOR DATA ALLOCATION FAILURE");
+            _VECTOR_STATUS_PRINTER(VECTOR_DATA_ALLOCATION_FAILURE, "Vector_Create");
         }
     }
     else
     {
-        fprintf(stderr, "[ERROR] at [Vector_Create] : VECTOR ALLOCATION FAILURE");
+        _VECTOR_STATUS_PRINTER(VECTOR_ALLOCATION_FAILURE, "Vector_Create");
         return NULL;
     }
     
@@ -92,14 +136,19 @@ Vector *Vector_Create(size_t size, size_t element_size)
 
 void *Vector_GetAt(Vector *v, size_t index)
 {
-    if (v == NULL || v->_data == NULL)
+    if (!_Is_Vector_Valid(v))
     {
-        fprintf(stderr, "\n-[ERROR] at [Vector_GetAt] : INVALID ARGUMENTS");
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_GetAt");
+        return NULL;
+    }
+    if (v->_data == NULL)
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_EMPTY, "Vector_GetAt");
         return NULL;
     }
     if (index >= v->_size)
     {
-        fprintf(stderr, "\n-[ERROR] at [Vector_GetAt] : INDEX OUT OF RANGE");
+        _VECTOR_STATUS_PRINTER(VECTOR_INDEX_OUT_OF_RANGE, "Vector_GetAt");
         return NULL;
     }
 
@@ -111,13 +160,13 @@ VectorStatus Vector_SetAt(Vector *v, size_t index, void* value)
 {
     if (v == NULL || v->_data == NULL || value == NULL)
     {
-        fprintf(stderr, "\n-[ERROR] at [Vector_SetAt] : INVALID ARGUMENTS-\n");
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_SetAt");
         return VECTOR_INVALID_ARGUMENT;
     }
     
     if (index >= v->_size)
     {
-        fprintf(stderr, "[ERROR] at [Vector_SetAt] : INDEX OUT OF RANGE");
+        _VECTOR_STATUS_PRINTER(VECTOR_INDEX_OUT_OF_RANGE, "Vector_SetAt");
         return VECTOR_INDEX_OUT_OF_RANGE;
     }
 
@@ -134,12 +183,12 @@ static VectorStatus _Vector_resize(Vector *v)
     else
     {
         if (v->_capacity > SIZE_MAX / 2)
-            return VECTOR_REALLOCATION_FAILURE;
+            return VECTOR_SIZE_OVERFLOW;
         _new_capacity = v->_capacity * 2;
     }
 
     if (_new_capacity > SIZE_MAX / v->_element_size)
-        return VECTOR_REALLOCATION_FAILURE;
+        return VECTOR_SIZE_OVERFLOW;
 
     void* _new_data = ds_realloc(v->_data, _new_capacity * v->_element_size);
     if (_new_data != NULL)
@@ -156,7 +205,7 @@ VectorStatus Vector_PushBack(Vector *v, void* value)
 {
     if (v == NULL || value == NULL)
     {
-        fprintf(stderr, "[ERROR] at [Vector_PushBack] : INVALID ARGUMENTS");
+            _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_PushBack");
         return VECTOR_INVALID_ARGUMENT;
     }
 
@@ -167,7 +216,7 @@ VectorStatus Vector_PushBack(Vector *v, void* value)
         void *value_saver = ds_malloc(v->_element_size);
         if (value_saver == NULL)
         {
-            fprintf(stderr, "[ERROR] at [Vector_PushBack]: TEMPORARY ALLOCATION FAILURE\n");
+            _VECTOR_STATUS_PRINTER(VECTOR_ALLOCATION_FAILURE, "Vector_PushBack");
             return VECTOR_ALLOCATION_FAILURE;
         }
 
@@ -177,7 +226,7 @@ VectorStatus Vector_PushBack(Vector *v, void* value)
         if (status != VECTOR_SUCCESS)
         {
             ds_free(value_saver);
-            fprintf(stderr, "[ERROR] at [Vector_PushBack]: REALLOCATION FAILURE\n");
+            _VECTOR_STATUS_PRINTER(status, "Vector_PushBack");
             return status;
         }
 
@@ -198,11 +247,44 @@ VectorStatus Vector_PushBack(Vector *v, void* value)
     return VECTOR_SUCCESS;
 }
 
-void Vector_Clear(Vector *v)
+void Vector_Destroy(Vector *v)
 {
-    if (v == NULL)
+    if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_Destroy");
         return;
+    }
 
     ds_free(v->_data);
     ds_free(v);
+}
+
+void Vector_Clear(Vector *v)
+{
+    if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_Clear");
+        return;
+    }
+
+    v->_size = 0;
+}
+
+VectorStatus Vector_PopBack(Vector *v)
+{
+    if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_PopBack");
+        return VECTOR_INVALID_ARGUMENT;
+    }
+
+    if (v->_size == 0)
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_EMPTY, "Vector_PopBack");
+        return VECTOR_EMPTY;
+    }
+
+    v->_size--;
+
+    return VECTOR_SUCCESS;
 }
