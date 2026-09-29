@@ -288,3 +288,25 @@ VectorStatus Vector_PopBack(Vector *v)
 
     return VECTOR_SUCCESS;
 }
+
+VectorStatus Vector_Resize(Vector *v, size_t new_size)
+{
+    if (!_Is_Vector_Valid(v))
+    {
+        _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_Resize");
+        return VECTOR_INVALID_ARGUMENT;
+    }
+
+    while (new_size > v->_capacity)
+    {
+        VectorStatus status = _Vector_resize(v);
+        if (status != VECTOR_SUCCESS)
+        {
+            _VECTOR_STATUS_PRINTER(status, "Vector_Resize");
+            return status;
+        }
+    }
+
+    v->_size = new_size;
+    return VECTOR_SUCCESS;
+}

@@ -27,3 +27,4 @@ VectorStatus Vector_PushBack(Vector *v, void *value);
 void Vector_Clear(Vector *v);
 void Vector_Destroy(Vector *v);
 VectorStatus Vector_PopBack(Vector *v);
+VectorStatus Vector_Resize(Vector *v, size_t new_size);
