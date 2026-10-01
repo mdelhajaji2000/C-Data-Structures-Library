@@ -1,6 +1,7 @@
 #include "..\API\linked_list.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "..\memory\memory.h"
 
 #define _LIST_STATUS_PRINTER(status, function_name)                     \
     do                                                                  \
@@ -45,17 +46,56 @@ struct LinkedList
     _node* _tail;
 };
 
-static bool _Is_List_Empty(void* L)
+size_t List_GetSize(const LinkedList* L)
 {
-    return L == NULL;
+    if (L != NULL)
+    {
+        return L->_size;
+    }
+
+    _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetSize");
+    return 0;
 }
 
-size_t List_GetSize(LinkedList* L)
+LinkedList* List_Create(size_t element_size)
 {
-    
+    if (element_size == 0)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Create");
+        return NULL;
+    }
+    LinkedList *List = (LinkedList *)ds_malloc(sizeof(LinkedList));
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_Create");
+        return NULL;
+    }
+
+    List->_element_size = element_size;
+    List->_head = NULL;
+    List->_tail = NULL;
+    List->_size = 0;
+    return List;
 }
 
-LinkedList* List_Create()
+LinkedListStatus List_Destroy(LinkedList *List)
 {
+    if (List == NULL)
+        return LS_SUCCESS;
 
+    _node *current = List->_head;
+
+    while (current != NULL)
+    {
+        _node *next = current->_next;
+
+        ds_free(current->_data);
+        ds_free(current);
+
+        current = next;
+    }
+
+    ds_free(List);
+
+    return LS_SUCCESS;
 }

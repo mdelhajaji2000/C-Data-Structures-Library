@@ -11,3 +11,7 @@ typedef enum
     LS_EMPTY = -4,
     LS_INDEX_OUT_OF_RANGE = -5
 } LinkedListStatus;
+
+size_t List_GetSize(const LinkedList* L);
+LinkedList* List_Create(size_t element_size);
+LinkedListStatus List_Destroy(LinkedList* List);
