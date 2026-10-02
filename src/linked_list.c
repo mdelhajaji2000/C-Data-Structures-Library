@@ -1,6 +1,8 @@
 #include "..\API\linked_list.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 #include "..\memory\memory.h"
 
 #define _LIST_STATUS_PRINTER(status, function_name)                     \
@@ -57,6 +59,11 @@ size_t List_GetSize(const LinkedList* L)
     return 0;
 }
 
+bool List_Is_Empty(LinkedList *List)
+{
+    return List->_size == 0;
+}
+
 LinkedList* List_Create(size_t element_size)
 {
     if (element_size == 0)
@@ -97,5 +104,38 @@ LinkedListStatus List_Destroy(LinkedList *List)
 
     ds_free(List);
 
+    return LS_SUCCESS;
+}
+
+LinkedListStatus List_PushFront(LinkedList *List, void* value)
+{
+    if (List == NULL || value == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushFront");
+        return LS_INVALID_ARGUMENT;
+    }
+
+    _node* node_ToPush = ds_malloc(sizeof(_node));
+    if (node_ToPush == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushFront");
+        return LS_ALLOCATION_FAILURE;
+    }
+    node_ToPush->_data = malloc(List->_element_size);
+    if (node_ToPush->_data == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushFront");
+        free(node_ToPush);
+        return LS_DATA_ALLOCATION_FAILURE;
+    }
+
+    memcpy(node_ToPush->_data, value, List->_element_size);
+
+    if (List->_tail == NULL)
+        List->_tail = node_ToPush;
+
+    node_ToPush->_next = List->_head;
+    List->_head = node_ToPush;
+    List->_size++;
     return LS_SUCCESS;
 }

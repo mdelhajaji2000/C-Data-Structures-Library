@@ -15,3 +15,5 @@ typedef enum
 size_t List_GetSize(const LinkedList* L);
 LinkedList* List_Create(size_t element_size);
 LinkedListStatus List_Destroy(LinkedList* List);
+bool List_Is_Empty(LinkedList *List);
+LinkedListStatus List_PushFront(LinkedList *List, void* value);
