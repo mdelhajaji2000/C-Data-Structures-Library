@@ -252,3 +252,45 @@ void* List_GetAt(LinkedList* List, size_t index)
     
     return current->_data;
 }
+
+LinkedListStatus List_DeleteAt(LinkedList *List, size_t index)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_DeleteAt");
+        return LS_INVALID_ARGUMENT;
+    }
+    if (index >= List->_size)
+    {
+        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_DeleteAt");
+        return LS_INDEX_OUT_OF_RANGE;
+    }
+
+    _node *previous = NULL;
+    _node *current = List->_head;
+    for (size_t i = 0; i < index; i++)
+    {
+        previous = current;
+        current = current->_next;
+    }
+
+    if (previous == NULL)
+        List->_head = current->_next;
+    else
+        previous->_next = current->_next;
+
+    if (current == List->_tail)
+        List->_tail = previous;
+
+    ds_free(current->_data);
+    ds_free(current);
+    List->_size--;
+
+    if (List->_size == 0)
+    {
+        List->_head = NULL;
+        List->_tail = NULL;
+    }
+
+    return LS_SUCCESS;
+}
