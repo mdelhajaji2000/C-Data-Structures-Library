@@ -140,6 +140,47 @@ LinkedListStatus List_PushFront(LinkedList *List, void* value)
     return LS_SUCCESS;
 }
 
+LinkedListStatus List_PushBack(LinkedList *List, void *value)
+{
+    if (List == NULL || value == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushBack");
+        return LS_INVALID_ARGUMENT;
+    }
+
+    _node* node_toPush = ds_malloc(sizeof(_node));
+    if (node_toPush == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushBack");
+        return LS_ALLOCATION_FAILURE;
+    }
+
+    node_toPush->_data = ds_malloc(List->_element_size);
+    if (node_toPush->_data == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushBack");
+        ds_free(node_toPush);
+        return LS_DATA_ALLOCATION_FAILURE;
+    }
+
+    memcpy(node_toPush->_data, value, List->_element_size);
+    node_toPush->_next = NULL;
+
+    if (List->_tail == NULL)
+    {
+        List->_head = node_toPush;
+        List->_tail = node_toPush;
+    }
+    else
+    {
+        List->_tail->_next = node_toPush;
+        List->_tail = node_toPush;
+    }
+
+    List->_size++;
+    return LS_SUCCESS;
+}
+
 void* List_GetLast(const LinkedList* List)
 {
     if (List == NULL)

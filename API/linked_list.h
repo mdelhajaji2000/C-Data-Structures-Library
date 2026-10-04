@@ -18,6 +18,7 @@ LinkedList* List_Create(size_t element_size);
 LinkedListStatus List_Destroy(LinkedList* List);
 bool List_Is_Empty(LinkedList *List);
 LinkedListStatus List_PushFront(LinkedList *List, void* value);
+LinkedListStatus List_PushBack(LinkedList *List, void *value);
 void* List_GetLast(const LinkedList* List);
 void* List_GetFirst(const LinkedList* List);
 bool List_IsLast(const LinkedList *List, const void* element);
