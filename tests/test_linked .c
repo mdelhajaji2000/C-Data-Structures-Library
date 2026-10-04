@@ -1,28 +1,15 @@
 #include <stdio.h>
-#include "../API/vector.h"
+#include "../API/Linked_List.h"
 
 
 int main()
 {
-    printf("Program started\n");
-    Vector* v = (Vector *)Vector_Create(10, sizeof(int));
-    
+    LinkedList *List = List_Create(sizeof(int));
     for (int i = 0; i < 10; i++)
     {
-        Vector_PushBack(v, &(int){i});
+        List_PushFront(List, i);
     }
 
-    *((int *)Vector_GetAt(v, 5)) = 3333;
-
-    printf("Vector Elements : \n");
-    for (int i = 0 ; i < 10; i++)
-    {
-        printf("v[%d] = %d\n", i, *((int *)Vector_GetAt(v, i)));
-    }
-
-
-    printf("Program End..!\n");
-    Vector_Clear(v);
     
     return 0;
 }

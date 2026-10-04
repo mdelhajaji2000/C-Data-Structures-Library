@@ -121,11 +121,11 @@ LinkedListStatus List_PushFront(LinkedList *List, void* value)
         _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushFront");
         return LS_ALLOCATION_FAILURE;
     }
-    node_ToPush->_data = malloc(List->_element_size);
+    node_ToPush->_data = ds_malloc(List->_element_size);
     if (node_ToPush->_data == NULL)
     {
         _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushFront");
-        free(node_ToPush);
+        ds_free(node_ToPush);
         return LS_DATA_ALLOCATION_FAILURE;
     }
 
@@ -138,4 +138,76 @@ LinkedListStatus List_PushFront(LinkedList *List, void* value)
     List->_head = node_ToPush;
     List->_size++;
     return LS_SUCCESS;
+}
+
+void* List_GetLast(const LinkedList* List)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetLast");
+        return NULL;
+    }
+    if (List->_tail == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetLast");
+        return NULL;
+    }
+    return List->_tail->_data;
+}
+
+void* List_GetFirst(const LinkedList* List)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetFirst");
+        return NULL;
+    }
+    if (List->_head == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetFirst");
+        return NULL;
+    }
+    return List->_head->_data;
+}
+
+bool List_IsLast(const LinkedList *List, const void* element)
+{
+    if (List == NULL || element == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_IsLast");
+        return false;
+    }
+    if (List->_tail == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_IsLast");
+        return false;
+    }
+    return element == List->_tail->_data;
+}
+
+void* List_GetAt(LinkedList* List, size_t index)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetAt");
+        return NULL;
+    }
+    if (List->_tail == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetAt");
+        return NULL;
+    }
+    if (index >= List->_size)
+    {
+        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_GetAt");
+        return NULL;
+    }
+
+    _node* current = List->_head;
+    for (size_t i = 0; i < index; i++)
+    {
+        current = current->_next;
+    }
+    
+    return current->_data;
 }
