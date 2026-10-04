@@ -26,3 +26,4 @@ void* List_GetAt(LinkedList* List, size_t index);
 LinkedListStatus List_DeleteAt(LinkedList *List, size_t index);
 LinkedListStatus List_PopBack(LinkedList *List);
 LinkedListStatus List_PopFront(LinkedList *List);
+LinkedListStatus List_Clear(LinkedList* List);

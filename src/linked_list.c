@@ -308,3 +308,27 @@ LinkedListStatus List_PopFront(LinkedList *List)
 {
     return List_DeleteAt(List ,0);
 }
+
+LinkedListStatus List_Clear(LinkedList* List)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Clear");
+        return LS_INVALID_ARGUMENT;
+    }
+
+    _node *current = List->_head;
+    _node *next = NULL;
+    while (current != NULL)
+    {
+        next = current->_next;
+        ds_free(current->_data);
+        ds_free(current);
+        current = next;
+    }
+    
+    List->_head = NULL;
+    List->_tail = NULL;
+    List->_size = 0;
+    return LS_SUCCESS;
+}
