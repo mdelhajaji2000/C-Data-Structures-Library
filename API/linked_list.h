@@ -24,3 +24,5 @@ void* List_GetFirst(const LinkedList* List);
 bool List_IsLast(const LinkedList *List, const void* element);
 void* List_GetAt(LinkedList* List, size_t index);
 LinkedListStatus List_DeleteAt(LinkedList *List, size_t index);
+LinkedListStatus List_PopBack(LinkedList *List);
+LinkedListStatus List_PopFront(LinkedList *List);

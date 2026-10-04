@@ -294,3 +294,17 @@ LinkedListStatus List_DeleteAt(LinkedList *List, size_t index)
 
     return LS_SUCCESS;
 }
+
+LinkedListStatus List_PopBack(LinkedList *List)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PopBack");
+    }
+    return List_DeleteAt(List, List->_size - 1);
+}
+
+LinkedListStatus List_PopFront(LinkedList *List)
+{
+    return List_DeleteAt(List ,0);
+}
