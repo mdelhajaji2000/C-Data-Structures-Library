@@ -59,8 +59,13 @@ size_t List_GetSize(const LinkedList* L)
     return 0;
 }
 
-bool List_Is_Empty(LinkedList *List)
+bool List_Is_Empty(const LinkedList *List)
 {
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Is_Empty");
+        return false;
+    }
     return List->_size == 0;
 }
 
@@ -300,13 +305,33 @@ LinkedListStatus List_PopBack(LinkedList *List)
     if (List == NULL)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PopBack");
+        return LS_INVALID_ARGUMENT;
     }
+
+    if (List->_size == 0)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_PopBack");
+        return LS_EMPTY;
+    }
+
     return List_DeleteAt(List, List->_size - 1);
 }
 
 LinkedListStatus List_PopFront(LinkedList *List)
 {
-    return List_DeleteAt(List ,0);
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PopFront");
+        return LS_INVALID_ARGUMENT;
+    }
+
+    if (List->_size == 0)
+    {
+        _LIST_STATUS_PRINTER(LS_EMPTY, "List_PopFront");
+        return LS_EMPTY;
+    }
+
+    return List_DeleteAt(List, 0);
 }
 
 LinkedListStatus List_Clear(LinkedList* List)
@@ -333,9 +358,10 @@ LinkedListStatus List_Clear(LinkedList* List)
     return LS_SUCCESS;
 }
 
-size_t List_Find(const LinkedList* List, const void* value)
+size_t List_Find(const LinkedList* List, const void* value,
+int (*compare)(const void*, const void*))
 {
-    if (List == NULL || value == NULL)
+    if (List == NULL || value == NULL || compare == NULL)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Find");
         return SIZE_MAX;
@@ -345,7 +371,7 @@ size_t List_Find(const LinkedList* List, const void* value)
     const _node* current = List->_head;
     while (current != NULL)
     {
-        if (memcmp(current->_data, value, List->_element_size) == 0)
+        if (compare(current->_data, value) == 0)
             return index;
 
         current = current->_next;
