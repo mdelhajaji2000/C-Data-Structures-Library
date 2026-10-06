@@ -332,3 +332,25 @@ LinkedListStatus List_Clear(LinkedList* List)
     List->_size = 0;
     return LS_SUCCESS;
 }
+
+size_t List_Find(const LinkedList* List, const void* value)
+{
+    if (List == NULL || value == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Find");
+        return SIZE_MAX;
+    }
+
+    size_t index = 0;
+    const _node* current = List->_head;
+    while (current != NULL)
+    {
+        if (memcmp(current->_data, value, List->_element_size) == 0)
+            return index;
+
+        current = current->_next;
+        index++;
+    }
+
+    return SIZE_MAX;
+}

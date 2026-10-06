@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef struct LinkedList LinkedList;
 
@@ -27,3 +28,5 @@ LinkedListStatus List_DeleteAt(LinkedList *List, size_t index);
 LinkedListStatus List_PopBack(LinkedList *List);
 LinkedListStatus List_PopFront(LinkedList *List);
 LinkedListStatus List_Clear(LinkedList* List);
+/* Returns the first matching index, or SIZE_MAX if not found or arguments are invalid. */
+size_t List_Find(const LinkedList* List, const void* value);
