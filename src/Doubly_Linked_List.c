@@ -3,6 +3,21 @@
 
 #include <stdio.h>
 
+typedef struct _node 
+{
+    void* _data;
+    void* _next;
+    void* _prev;
+} _node;
+
+typedef struct DLinkedList
+{
+    _node* _head;
+    _node* _tail;
+    size_t _element_size;
+    size_t _size;
+} DLinkedList;
+
 #define _D_LIST_STATUS_PRINTER(status, function_name)                         \
     do                                                                        \
     {                                                                         \
@@ -32,3 +47,44 @@
         }                                                                     \
     } while (0)
 
+    DLinkedList* DList_Create(size_t element_size)
+    {
+        if (element_size == 0)
+        {
+            _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_Create");
+            return NULL;
+        }
+
+        DLinkedList* DList = ds_malloc(sizeof(DLinkedList));
+        if (DList == NULL)
+        {
+            _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_Create");
+            return NULL;
+        }
+
+        DList->_size = 0;
+        DList->_element_size = element_size;
+        DList->_tail = NULL;
+        DList->_head = NULL;
+
+        return DList;
+    }
+
+    DLinkedListStatus DList_Destroy(DLinkedList* DList)
+    {
+        if (DList == NULL)
+            return D_LS_SUCCESS;
+
+        _node* NodeToDelete = DList->_head;
+        _node* NextSaver;
+        while (NodeToDelete != NULL)
+        {
+            NextSaver = NodeToDelete->_next;
+            ds_free(NodeToDelete->_data);
+            ds_free(NodeToDelete);
+            NodeToDelete = NextSaver;
+        }
+        ds_free(DList);
+        
+        return D_LS_SUCCESS;
+    }

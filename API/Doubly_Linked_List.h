@@ -15,3 +15,5 @@ typedef enum {
     D_LS_INDEX_OUT_OF_RANGE = -5
 } DLinkedListStatus;
 
+DLinkedList* DList_Create(size_t element_size);
+DLinkedListStatus DList_Destroy(DLinkedList* DList);
