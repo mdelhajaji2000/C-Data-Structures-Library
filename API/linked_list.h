@@ -33,5 +33,6 @@ LinkedListStatus List_PopFront(LinkedList *List);
 LinkedListStatus List_Clear(LinkedList* List);
 size_t List_Find(const LinkedList* List, const void* value,
 int (*compare)(const void*, const void*));
+LinkedListStatus List_PushAt(LinkedList *List, size_t index, void* value);
 
 #endif /* LINKED_LIST_H */

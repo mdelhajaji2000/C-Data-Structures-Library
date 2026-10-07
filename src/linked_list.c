@@ -380,3 +380,54 @@ int (*compare)(const void*, const void*))
 
     return SIZE_MAX;
 }
+
+LinkedListStatus List_PushAt(LinkedList *List, size_t index, void* value)
+{
+    if (List == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushAt");
+        return LS_INVALID_ARGUMENT;
+    }
+    if (index > List->_size)
+    {
+        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_PushAt");
+        return LS_INDEX_OUT_OF_RANGE;
+    }
+    if (value == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushAt");
+        return LS_INVALID_ARGUMENT;
+    }
+
+    if (index == 0)
+        return List_PushFront(List, value);
+    else if (index == List->_size)
+        return List_PushBack(List, value);
+
+    _node* NodeToInsert = ds_malloc(sizeof(_node));
+    if (NodeToInsert == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushAt");
+        return LS_ALLOCATION_FAILURE;
+    }
+
+    NodeToInsert->_data = ds_malloc(List->_element_size);
+    if (NodeToInsert->_data == NULL)
+    {
+        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushAt");
+        ds_free(NodeToInsert);
+        return LS_DATA_ALLOCATION_FAILURE;
+    }
+
+    memcpy(NodeToInsert->_data, value, List->_element_size);
+    _node* current = List->_head;
+    for (size_t i = 0; i < index - 1; i++)
+    {
+        current = current->_next;
+    }
+
+    NodeToInsert->_next = current->_next;
+    current->_next = NodeToInsert;
+    List->_size++;
+    return LS_SUCCESS;
+}
