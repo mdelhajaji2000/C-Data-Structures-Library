@@ -89,7 +89,7 @@ DLinkedListStatus DList_Destroy(DLinkedList* DList)
     return D_LS_SUCCESS;
 }
 
-size_t DList_GetSize(DLinkedList *DList)
+size_t DList_GetSize(const DLinkedList *DList)
 {
     if (DList == NULL)
     {
@@ -100,7 +100,7 @@ size_t DList_GetSize(DLinkedList *DList)
     return DList->_size;
 }
 
-size_t DList_GetElementSize(DLinkedList *DList)
+size_t DList_GetElementSize(const DLinkedList *DList)
 {
     if (DList == NULL)
     {
