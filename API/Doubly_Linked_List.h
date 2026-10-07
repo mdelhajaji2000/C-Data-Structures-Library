@@ -17,3 +17,5 @@ typedef enum {
 
 DLinkedList* DList_Create(size_t element_size);
 DLinkedListStatus DList_Destroy(DLinkedList* DList);
+size_t DList_GetSize(DLinkedList *DList);
+size_t DList_GetElementSize(DLinkedList *DList);
