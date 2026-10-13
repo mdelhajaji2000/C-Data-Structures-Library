@@ -213,3 +213,48 @@ DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value)
 
     return D_LS_SUCCESS;
 }
+
+DLinkedListStatus DList_PushBack(DLinkedList* DList, void* value)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PushBack");
+        return D_LS_EMPTY;
+    }
+    if (value == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_PushBack");
+        return D_LS_INVALID_ARGUMENT;
+    }
+
+    _node* NodToInsert = ds_malloc(sizeof(_node));
+    if (NodToInsert == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_PushBack");
+        return D_LS_ALLOCATION_FAILURE;
+    }
+    NodToInsert->_data = ds_malloc(DList->_element_size);
+    if (NodToInsert->_data == NULL)
+    {
+        ds_free(NodToInsert);
+        _D_LIST_STATUS_PRINTER(D_LS_DATA_ALLOCATION_FAILURE, "DList_PushBack");
+        return D_LS_DATA_ALLOCATION_FAILURE;
+    }
+    memcpy(NodToInsert->_data, value, DList->_element_size);
+    NodToInsert->_next = NULL;
+    NodToInsert->_prev = NULL;
+    if (DList->_tail == NULL)
+    {
+        DList->_tail = NodToInsert;
+        DList->_head = NodToInsert;
+        DList->_size++;
+        return D_LS_SUCCESS;
+    }
+
+    NodToInsert->_prev = DList->_tail;
+    DList->_tail->_next = NodToInsert;
+    DList->_tail = NodToInsert;
+    DList->_size++;
+
+    return D_LS_SUCCESS;
+}
