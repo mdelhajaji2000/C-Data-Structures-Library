@@ -28,3 +28,4 @@ DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index);
 DLinkedListStatus DList_PopFront(DLinkedList* DList);
 DLinkedListStatus DList_PopBack(DLinkedList* DList);
 DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index);
+DLinkedList* DList_Clear(DLinkedList* DList);

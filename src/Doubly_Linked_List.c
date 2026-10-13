@@ -408,3 +408,27 @@ DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index)
     DList->_size--;
     return D_LS_SUCCESS;
 }
+
+DLinkedList* DList_Clear(DLinkedList* DList)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_Clear");
+        return NULL;
+    }
+
+    _node* current = DList->_head;
+    while (current != NULL)
+    {
+        _node* next = current->_next;
+        ds_free(current->_data);
+        ds_free(current);
+        current = next;
+    }
+
+    DList->_head = NULL;
+    DList->_tail = NULL;
+    DList->_size = 0;
+
+    return DList;
+}
