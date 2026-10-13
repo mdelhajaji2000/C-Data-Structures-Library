@@ -2,6 +2,7 @@
 #include "..\memory\memory.h"
 
 #include <stdio.h>
+#include <string.h>
 
 typedef struct _node 
 {
@@ -165,4 +166,50 @@ void* DList_GetAt(const DLinkedList* DList, size_t index)
     }
 
     return current->_data;
+}
+
+DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PushFront");
+        return D_LS_EMPTY;
+    }
+    if (value == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_PushFront");
+        return D_LS_INVALID_ARGUMENT;
+    }
+
+    _node* NodToInsert = ds_malloc(sizeof(_node));
+    if (NodToInsert == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_PushFront");
+        return D_LS_ALLOCATION_FAILURE;
+    }
+    NodToInsert->_data = ds_malloc(DList->_element_size);
+    if (NodToInsert->_data == NULL)
+    {
+        ds_free(NodToInsert);
+        _D_LIST_STATUS_PRINTER(D_LS_DATA_ALLOCATION_FAILURE, "DList_PushFront");
+        return D_LS_DATA_ALLOCATION_FAILURE;
+    }
+    NodToInsert->_prev = NULL;
+    NodToInsert->_next = DList->_head;
+    memcpy(NodToInsert->_data, value, DList->_element_size);
+    if (DList->_head == NULL)
+    {
+        DList->_head = NodToInsert;
+        DList->_size++;
+
+        DList->_tail = NodToInsert;
+        return D_LS_SUCCESS;
+    }
+
+    DList->_head->_prev = NodToInsert;
+
+    DList->_head = NodToInsert;
+    DList->_size++;
+
+    return D_LS_SUCCESS;
 }

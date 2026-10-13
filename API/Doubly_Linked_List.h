@@ -22,3 +22,4 @@ size_t DList_GetElementSize(const DLinkedList* DList);
 void* DList_GetFirst(const DLinkedList *DList);
 void* DList_GetLast(const DLinkedList* DList);
 void* DList_GetAt(const DLinkedList* DList, size_t index);
+DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value);
