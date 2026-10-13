@@ -108,45 +108,57 @@ size_t DList_GetElementSize(const DLinkedList *DList)
         return 0;
     }
 
-    return DList->_size;
+    return DList->_element_size;
 }
 
-void* DList_GetFirst(const DLinkedList *List)
+void* DList_GetFirst(const DLinkedList *DList)
 {
-    if (List == NULL)
+    if (DList == NULL)
     {
         _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetFirst");
         return NULL;
     }
-    
-    return List->_head->_data;
+
+    if (DList->_head == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetFirst");
+        return NULL;
+    }
+
+    return DList->_head->_data;
 }
 
-void* DList_GetLast(const DLinkedList* List)
+void* DList_GetLast(const DLinkedList* DList)
 {
-    if (List == NULL)
+    if (DList == NULL)
     {
         _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetLast");
         return NULL;
     }
 
-    return List->_tail->_data;
+    if (DList->_tail == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetLast");
+        return NULL;
+    }
+
+    return DList->_tail->_data;
 }
 
-void* DList_GetAt(const DLinkedList* List, size_t index)
+void* DList_GetAt(const DLinkedList* DList, size_t index)
 {
-    if (List == NULL)
+    if (DList == NULL)
     {
         _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetAt");
         return NULL;
     }
-    if (index >= List->_size)
+    if (index >= DList->_size)
     {
         _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_GetAt");
         return NULL;
     }
 
-    _node* current = List->_head;
+    _node* current = DList->_head;
     for (size_t i = 0; i < index; i++)
     {
         current = current->_next;
