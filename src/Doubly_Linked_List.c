@@ -110,3 +110,25 @@ size_t DList_GetElementSize(const DLinkedList *DList)
 
     return DList->_size;
 }
+
+void* DList_GetFirst(const DLinkedList *List)
+{
+    if (List == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetFirst");
+        return NULL;
+    }
+    
+    return List->_head->_data;
+}
+
+void* DList_GetLast(const DLinkedList* List)
+{
+    if (List == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetLast");
+        return NULL;
+    }
+
+    return List->_tail->_data;
+}
