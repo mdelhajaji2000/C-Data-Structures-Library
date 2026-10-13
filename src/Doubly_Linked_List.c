@@ -132,3 +132,25 @@ void* DList_GetLast(const DLinkedList* List)
 
     return List->_tail->_data;
 }
+
+void* DList_GetAt(const DLinkedList* List, size_t index)
+{
+    if (List == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetAt");
+        return NULL;
+    }
+    if (index >= List->_size)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_GetAt");
+        return NULL;
+    }
+
+    _node* current = List->_head;
+    for (size_t i = 0; i < index; i++)
+    {
+        current = current->_next;
+    }
+
+    return current->_data;
+}

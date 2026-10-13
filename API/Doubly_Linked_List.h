@@ -21,3 +21,4 @@ size_t DList_GetSize(const DLinkedList* DList);
 size_t DList_GetElementSize(const DLinkedList* DList);
 void* DList_GetFirst(const DLinkedList *List);
 void* DList_GetLast(const DLinkedList* List);
+void* DList_GetAt(const DLinkedList* List, size_t index);
