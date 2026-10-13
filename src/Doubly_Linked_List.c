@@ -311,3 +311,100 @@ DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index)
 
     return D_LS_SUCCESS;
 }
+
+DLinkedListStatus DList_PopFront(DLinkedList* DList)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PopFront");
+        return D_LS_EMPTY;
+    }
+    if (DList->_head == NULL)
+        return D_LS_SUCCESS;
+
+    if (DList->_head == DList->_tail)
+    {
+        ds_free(DList->_head);
+        ds_free(DList->_head);
+        DList->_head = NULL;
+        DList->_tail = NULL;
+        DList->_size--;
+        return D_LS_SUCCESS;
+    }
+
+    _node* NodeToDelete = DList->_head;
+    _node* New_Head = DList->_head->_next;
+    New_Head->_prev = NULL;
+    ds_free(NodeToDelete->_data);
+    ds_free(NodeToDelete);
+    DList->_head = New_Head;
+    DList->_size--;
+    return D_LS_SUCCESS;
+}
+
+DLinkedListStatus DList_PopBack(DLinkedList* DList)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PopBack");
+        return D_LS_EMPTY;
+    }
+    if (DList->_tail == NULL)
+        return D_LS_SUCCESS;
+
+    if (DList->_head == DList->_tail)
+    {
+        ds_free(DList->_tail->_data);
+        ds_free(DList->_tail);
+        DList->_head = NULL;
+        DList->_tail = NULL;
+        DList->_size--;
+        return D_LS_SUCCESS;
+    }
+
+    _node* NodeToDelete = DList->_tail;
+    _node* NewTail = DList->_tail->_prev;
+    NewTail->_next = NULL;
+    ds_free(NodeToDelete->_data);
+    ds_free(NodeToDelete);
+    DList->_tail = NewTail;
+    DList->_size--;
+    return D_LS_SUCCESS;
+}
+
+DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index)
+{
+    if (DList == NULL)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_DeleteAt");
+        return D_LS_EMPTY;
+    }
+    if (index >= DList->_size)
+    {
+        _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_DeleteAt");
+        return D_LS_INDEX_OUT_OF_RANGE;
+    }
+
+    if (DList->_head == NULL)
+        return D_LS_SUCCESS;
+
+    if (index == 0)
+        return DList_PopFront(DList);
+    else if (index == DList->_size - 1)
+        return DList_PopBack(DList);
+
+    _node* currrent = DList->_head;
+    for (int i = 0; i < index; i++)
+    {
+        currrent = currrent->_next;
+    }
+
+    _node* curr_next = currrent->_next;
+    _node* curr_prev = currrent->_prev;
+    curr_next->_prev = curr_prev;
+    curr_prev->_next = curr_next;
+    ds_free(currrent->_data);
+    ds_free(currrent);
+    DList->_size--;
+    return D_LS_SUCCESS;
+}
