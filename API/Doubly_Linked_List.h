@@ -24,3 +24,4 @@ void* DList_GetLast(const DLinkedList* DList);
 void* DList_GetAt(const DLinkedList* DList, size_t index);
 DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value);
 DLinkedListStatus DList_PushBack(DLinkedList* DList, void* value);
+DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index);
