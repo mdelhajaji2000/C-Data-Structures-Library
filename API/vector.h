@@ -11,7 +11,8 @@ typedef enum
     VECTOR_INDEX_OUT_OF_RANGE = -4,
     VECTOR_REALLOCATION_FAILURE = -5,
     VECTOR_SIZE_OVERFLOW = -6,
-    VECTOR_EMPTY = -7
+    VECTOR_EMPTY = -7,
+    VECTOR_INTERNAL_ERROR = -8
 } VectorStatus;
 
 typedef struct Vector Vector;

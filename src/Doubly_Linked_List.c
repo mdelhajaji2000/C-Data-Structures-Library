@@ -19,40 +19,12 @@ typedef struct DLinkedList
     size_t _size;
 } DLinkedList;
 
-#define _D_LIST_STATUS_PRINTER(status, function_name)                         \
-    do                                                                        \
-    {                                                                         \
-        switch (status)                                                       \
-        {                                                                     \
-        case D_LS_SUCCESS:                                                    \
-            fprintf(stderr, "[INFO] at [%s]: SUCCESS\n", function_name);     \
-            break;                                                            \
-        case D_LS_ALLOCATION_FAILURE:                                        \
-            fprintf(stderr, "[ERROR] at [%s]: ALLOCATION FAILURE\n", function_name); \
-            break;                                                            \
-        case D_LS_DATA_ALLOCATION_FAILURE:                                   \
-            fprintf(stderr, "[ERROR] at [%s]: DATA ALLOCATION FAILURE\n", function_name); \
-            break;                                                            \
-        case D_LS_INVALID_ARGUMENT:                                          \
-            fprintf(stderr, "[ERROR] at [%s]: INVALID ARGUMENT\n", function_name); \
-            break;                                                            \
-        case D_LS_EMPTY:                                                     \
-            fprintf(stderr, "[ERROR] at [%s]: LIST IS EMPTY\n", function_name); \
-            break;                                                            \
-        case D_LS_INDEX_OUT_OF_RANGE:                                        \
-            fprintf(stderr, "[ERROR] at [%s]: INDEX OUT OF RANGE\n", function_name); \
-            break;                                                            \
-        default:                                                              \
-            fprintf(stderr, "[ERROR] at [%s]: UNKNOWN LIST STATUS\n", function_name); \
-            break;                                                            \
-        }                                                                     \
-    } while (0)
+
 
 DLinkedListStatus DList_Create(size_t element_size, DLinkedList **out_list)
 {
     if (out_list == NULL || element_size == 0)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_Create");
         return D_LS_INVALID_ARGUMENT;
     }
     *out_list = NULL;
@@ -60,7 +32,6 @@ DLinkedListStatus DList_Create(size_t element_size, DLinkedList **out_list)
     DLinkedList* DList = ds_malloc(sizeof(DLinkedList));
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_Create");
         return D_LS_ALLOCATION_FAILURE;
     }
 
@@ -96,7 +67,6 @@ size_t DList_GetSize(const DLinkedList *DList)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DListGetSize");
         return 0;
     }
 
@@ -107,7 +77,6 @@ size_t DList_GetElementSize(const DLinkedList *DList)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetElementSize");
         return 0;
     }
 
@@ -118,14 +87,12 @@ size_t DList_GetElementSize(const DLinkedList *DList)
 {
     if (DList == NULL || out_value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_GetFirst");
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
 
     if (DList->_head == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetFirst");
         return D_LS_EMPTY;
     }
 
@@ -137,14 +104,12 @@ DLinkedListStatus DList_GetLast(const DLinkedList* DList, void **out_value)
 {
     if (DList == NULL || out_value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_GetLast");
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
 
     if (DList->_tail == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_GetLast");
         return D_LS_EMPTY;
     }
 
@@ -156,13 +121,11 @@ DLinkedListStatus DList_GetAt(const DLinkedList* DList, size_t index, void **out
 {
     if (DList == NULL || out_value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_GetAt");
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
     if (index >= DList->_size)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_GetAt");
         return D_LS_INDEX_OUT_OF_RANGE;
     }
 
@@ -180,26 +143,22 @@ DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PushFront");
         return D_LS_EMPTY;
     }
     if (value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_PushFront");
         return D_LS_INVALID_ARGUMENT;
     }
 
     _node* NodToInsert = ds_malloc(sizeof(_node));
     if (NodToInsert == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_PushFront");
         return D_LS_ALLOCATION_FAILURE;
     }
     NodToInsert->_data = ds_malloc(DList->_element_size);
     if (NodToInsert->_data == NULL)
     {
         ds_free(NodToInsert);
-        _D_LIST_STATUS_PRINTER(D_LS_DATA_ALLOCATION_FAILURE, "DList_PushFront");
         return D_LS_DATA_ALLOCATION_FAILURE;
     }
     NodToInsert->_prev = NULL;
@@ -226,26 +185,22 @@ DLinkedListStatus DList_PushBack(DLinkedList* DList, void* value)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PushBack");
         return D_LS_EMPTY;
     }
     if (value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_PushBack");
         return D_LS_INVALID_ARGUMENT;
     }
 
     _node* NodToInsert = ds_malloc(sizeof(_node));
     if (NodToInsert == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_PushBack");
         return D_LS_ALLOCATION_FAILURE;
     }
     NodToInsert->_data = ds_malloc(DList->_element_size);
     if (NodToInsert->_data == NULL)
     {
         ds_free(NodToInsert);
-        _D_LIST_STATUS_PRINTER(D_LS_DATA_ALLOCATION_FAILURE, "DList_PushBack");
         return D_LS_DATA_ALLOCATION_FAILURE;
     }
     memcpy(NodToInsert->_data, value, DList->_element_size);
@@ -271,17 +226,14 @@ DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_InsertAt");
         return D_LS_EMPTY;
     }
     if (value == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INVALID_ARGUMENT, "DList_InsertAt");
         return D_LS_INVALID_ARGUMENT;
     }
     if (index > DList->_size)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_InsertAt");
         return D_LS_INDEX_OUT_OF_RANGE;
     }
     if (index == 0)
@@ -292,14 +244,12 @@ DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index)
     _node* NodeToInsert = ds_malloc(sizeof(_node));
     if (NodeToInsert == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_ALLOCATION_FAILURE, "DList_InsertAt");
         return D_LS_ALLOCATION_FAILURE;
     }
     NodeToInsert->_data = ds_malloc(DList->_element_size);
     if (NodeToInsert->_data == NULL)
     {
         ds_free(NodeToInsert);
-        _D_LIST_STATUS_PRINTER(D_LS_DATA_ALLOCATION_FAILURE, "DList_InsertAt");
         return D_LS_DATA_ALLOCATION_FAILURE;
     }
     memcpy(NodeToInsert->_data, value, DList->_element_size);
@@ -324,7 +274,6 @@ DLinkedListStatus DList_PopFront(DLinkedList* DList)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PopFront");
         return D_LS_EMPTY;
     }
     if (DList->_head == NULL)
@@ -354,7 +303,6 @@ DLinkedListStatus DList_PopBack(DLinkedList* DList)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_PopBack");
         return D_LS_EMPTY;
     }
     if (DList->_tail == NULL)
@@ -384,12 +332,10 @@ DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_DeleteAt");
         return D_LS_EMPTY;
     }
     if (index >= DList->_size)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_INDEX_OUT_OF_RANGE, "DList_DeleteAt");
         return D_LS_INDEX_OUT_OF_RANGE;
     }
 
@@ -421,7 +367,6 @@ DLinkedListStatus DList_Clear(DLinkedList* DList)
 {
     if (DList == NULL)
     {
-        _D_LIST_STATUS_PRINTER(D_LS_EMPTY, "DList_Clear");
         return D_LS_INVALID_ARGUMENT;
     }
 

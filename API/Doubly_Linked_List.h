@@ -12,7 +12,8 @@ typedef enum {
     D_LS_DATA_ALLOCATION_FAILURE = -2,
     D_LS_INVALID_ARGUMENT = -3,
     D_LS_EMPTY = -4,
-    D_LS_INDEX_OUT_OF_RANGE = -5
+    D_LS_INDEX_OUT_OF_RANGE = -5,
+    D_LS_INTERNAL_ERROR = -6
 } DLinkedListStatus;
 
 DLinkedListStatus DList_Create(size_t element_size, DLinkedList **out_list);

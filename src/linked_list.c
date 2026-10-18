@@ -5,34 +5,7 @@
 #include <string.h>
 #include "..\memory\memory.h"
 
-#define _LIST_STATUS_PRINTER(status, function_name)                     \
-    do                                                                  \
-    {                                                                   \
-        switch (status)                                                 \
-        {                                                               \
-        case LS_SUCCESS:                                                \
-            fprintf(stderr, "[INFO] at [%s]: SUCCESS\n", function_name); \
-            break;                                                      \
-        case LS_ALLOCATION_FAILURE:                                     \
-            fprintf(stderr, "[ERROR] at [%s]: ALLOCATION FAILURE\n", function_name); \
-            break;                                                      \
-        case LS_DATA_ALLOCATION_FAILURE:                                \
-            fprintf(stderr, "[ERROR] at [%s]: DATA ALLOCATION FAILURE\n", function_name); \
-            break;                                                      \
-        case LS_INVALID_ARGUMENT:                                       \
-            fprintf(stderr, "[ERROR] at [%s]: INVALID ARGUMENT\n", function_name); \
-            break;                                                      \
-        case LS_EMPTY:                                                  \
-            fprintf(stderr, "[ERROR] at [%s]: LIST IS EMPTY\n", function_name); \
-            break;                                                      \
-        case LS_INDEX_OUT_OF_RANGE:                                     \
-            fprintf(stderr, "[ERROR] at [%s]: INDEX OUT OF RANGE\n", function_name); \
-            break;                                                      \
-        default:                                                        \
-            fprintf(stderr, "[ERROR] at [%s]: UNKNOWN LIST STATUS\n", function_name); \
-            break;                                                      \
-        }                                                               \
-    } while (0)
+
 
 typedef struct 
 {
@@ -55,7 +28,6 @@ size_t List_GetSize(const LinkedList* L)
         return L->_size;
     }
 
-    _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetSize");
     return 0;
 }
 
@@ -63,7 +35,6 @@ bool List_Is_Empty(const LinkedList *List)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Is_Empty");
         return false;
     }
     return List->_size == 0;
@@ -73,14 +44,12 @@ LinkedListStatus List_Create(size_t element_size, LinkedList **out_list)
 {
     if (out_list == NULL || element_size == 0)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Create");
         return LS_INVALID_ARGUMENT;
     }
     *out_list = NULL;
     LinkedList *List = (LinkedList *)ds_malloc(sizeof(LinkedList));
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_Create");
         return LS_ALLOCATION_FAILURE;
     }
 
@@ -118,20 +87,17 @@ LinkedListStatus List_PushFront(LinkedList *List, void* value)
 {
     if (List == NULL || value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushFront");
         return LS_INVALID_ARGUMENT;
     }
 
     _node* node_ToPush = ds_malloc(sizeof(_node));
     if (node_ToPush == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushFront");
         return LS_ALLOCATION_FAILURE;
     }
     node_ToPush->_data = ds_malloc(List->_element_size);
     if (node_ToPush->_data == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushFront");
         ds_free(node_ToPush);
         return LS_DATA_ALLOCATION_FAILURE;
     }
@@ -151,21 +117,18 @@ LinkedListStatus List_PushBack(LinkedList *List, void *value)
 {
     if (List == NULL || value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushBack");
         return LS_INVALID_ARGUMENT;
     }
 
     _node* node_toPush = ds_malloc(sizeof(_node));
     if (node_toPush == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushBack");
         return LS_ALLOCATION_FAILURE;
     }
 
     node_toPush->_data = ds_malloc(List->_element_size);
     if (node_toPush->_data == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushBack");
         ds_free(node_toPush);
         return LS_DATA_ALLOCATION_FAILURE;
     }
@@ -192,13 +155,11 @@ LinkedListStatus List_GetLast(const LinkedList* List, void **out_value)
 {
     if (List == NULL || out_value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetLast");
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
     if (List->_tail == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetLast");
         return LS_EMPTY;
     }
     *out_value = List->_tail->_data;
@@ -209,13 +170,11 @@ LinkedListStatus List_GetFirst(const LinkedList* List, void **out_value)
 {
     if (List == NULL || out_value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetFirst");
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
     if (List->_head == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetFirst");
         return LS_EMPTY;
     }
     *out_value = List->_head->_data;
@@ -226,12 +185,10 @@ bool List_IsLast(const LinkedList *List, const void* element)
 {
     if (List == NULL || element == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_IsLast");
         return false;
     }
     if (List->_tail == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_IsLast");
         return false;
     }
     return element == List->_tail->_data;
@@ -241,18 +198,15 @@ LinkedListStatus List_GetAt(LinkedList* List, size_t index, void **out_value)
 {
     if (List == NULL || out_value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetAt");
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
     if (List->_tail == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetAt");
         return LS_EMPTY;
     }
     if (index >= List->_size)
     {
-        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_GetAt");
         return LS_INDEX_OUT_OF_RANGE;
     }
 
@@ -270,12 +224,10 @@ LinkedListStatus List_DeleteAt(LinkedList *List, size_t index)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_DeleteAt");
         return LS_INVALID_ARGUMENT;
     }
     if (index >= List->_size)
     {
-        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_DeleteAt");
         return LS_INDEX_OUT_OF_RANGE;
     }
 
@@ -312,13 +264,11 @@ LinkedListStatus List_PopBack(LinkedList *List)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PopBack");
         return LS_INVALID_ARGUMENT;
     }
 
     if (List->_size == 0)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_PopBack");
         return LS_EMPTY;
     }
 
@@ -329,13 +279,11 @@ LinkedListStatus List_PopFront(LinkedList *List)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PopFront");
         return LS_INVALID_ARGUMENT;
     }
 
     if (List->_size == 0)
     {
-        _LIST_STATUS_PRINTER(LS_EMPTY, "List_PopFront");
         return LS_EMPTY;
     }
 
@@ -346,7 +294,6 @@ LinkedListStatus List_Clear(LinkedList* List)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Clear");
         return LS_INVALID_ARGUMENT;
     }
 
@@ -371,7 +318,6 @@ int (*compare)(const void*, const void*))
 {
     if (List == NULL || value == NULL || compare == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Find");
         return SIZE_MAX;
     }
 
@@ -393,17 +339,14 @@ LinkedListStatus List_PushAt(LinkedList *List, size_t index, void* value)
 {
     if (List == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushAt");
         return LS_INVALID_ARGUMENT;
     }
     if (index > List->_size)
     {
-        _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_PushAt");
         return LS_INDEX_OUT_OF_RANGE;
     }
     if (value == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_PushAt");
         return LS_INVALID_ARGUMENT;
     }
 
@@ -415,14 +358,12 @@ LinkedListStatus List_PushAt(LinkedList *List, size_t index, void* value)
     _node* NodeToInsert = ds_malloc(sizeof(_node));
     if (NodeToInsert == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_PushAt");
         return LS_ALLOCATION_FAILURE;
     }
 
     NodeToInsert->_data = ds_malloc(List->_element_size);
     if (NodeToInsert->_data == NULL)
     {
-        _LIST_STATUS_PRINTER(LS_DATA_ALLOCATION_FAILURE, "List_PushAt");
         ds_free(NodeToInsert);
         return LS_DATA_ALLOCATION_FAILURE;
     }
