@@ -69,25 +69,27 @@ bool List_Is_Empty(const LinkedList *List)
     return List->_size == 0;
 }
 
-LinkedList* List_Create(size_t element_size)
+LinkedListStatus List_Create(size_t element_size, LinkedList **out_list)
 {
-    if (element_size == 0)
+    if (out_list == NULL || element_size == 0)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_Create");
-        return NULL;
+        return LS_INVALID_ARGUMENT;
     }
+    *out_list = NULL;
     LinkedList *List = (LinkedList *)ds_malloc(sizeof(LinkedList));
     if (List == NULL)
     {
         _LIST_STATUS_PRINTER(LS_ALLOCATION_FAILURE, "List_Create");
-        return NULL;
+        return LS_ALLOCATION_FAILURE;
     }
 
     List->_element_size = element_size;
     List->_head = NULL;
     List->_tail = NULL;
     List->_size = 0;
-    return List;
+    *out_list = List;
+    return LS_SUCCESS;
 }
 
 LinkedListStatus List_Destroy(LinkedList *List)
@@ -186,34 +188,38 @@ LinkedListStatus List_PushBack(LinkedList *List, void *value)
     return LS_SUCCESS;
 }
 
-void* List_GetLast(const LinkedList* List)
+LinkedListStatus List_GetLast(const LinkedList* List, void **out_value)
 {
-    if (List == NULL)
+    if (List == NULL || out_value == NULL)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetLast");
-        return NULL;
+        return LS_INVALID_ARGUMENT;
     }
+    *out_value = NULL;
     if (List->_tail == NULL)
     {
         _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetLast");
-        return NULL;
+        return LS_EMPTY;
     }
-    return List->_tail->_data;
+    *out_value = List->_tail->_data;
+    return LS_SUCCESS;
 }
 
-void* List_GetFirst(const LinkedList* List)
+LinkedListStatus List_GetFirst(const LinkedList* List, void **out_value)
 {
-    if (List == NULL)
+    if (List == NULL || out_value == NULL)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetFirst");
-        return NULL;
+        return LS_INVALID_ARGUMENT;
     }
+    *out_value = NULL;
     if (List->_head == NULL)
     {
         _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetFirst");
-        return NULL;
+        return LS_EMPTY;
     }
-    return List->_head->_data;
+    *out_value = List->_head->_data;
+    return LS_SUCCESS;
 }
 
 bool List_IsLast(const LinkedList *List, const void* element)
@@ -231,22 +237,23 @@ bool List_IsLast(const LinkedList *List, const void* element)
     return element == List->_tail->_data;
 }
 
-void* List_GetAt(LinkedList* List, size_t index)
+LinkedListStatus List_GetAt(LinkedList* List, size_t index, void **out_value)
 {
-    if (List == NULL)
+    if (List == NULL || out_value == NULL)
     {
         _LIST_STATUS_PRINTER(LS_INVALID_ARGUMENT, "List_GetAt");
-        return NULL;
+        return LS_INVALID_ARGUMENT;
     }
+    *out_value = NULL;
     if (List->_tail == NULL)
     {
         _LIST_STATUS_PRINTER(LS_EMPTY, "List_GetAt");
-        return NULL;
+        return LS_EMPTY;
     }
     if (index >= List->_size)
     {
         _LIST_STATUS_PRINTER(LS_INDEX_OUT_OF_RANGE, "List_GetAt");
-        return NULL;
+        return LS_INDEX_OUT_OF_RANGE;
     }
 
     _node* current = List->_head;
@@ -255,7 +262,8 @@ void* List_GetAt(LinkedList* List, size_t index)
         current = current->_next;
     }
     
-    return current->_data;
+    *out_value = current->_data;
+    return LS_SUCCESS;
 }
 
 LinkedListStatus List_DeleteAt(LinkedList *List, size_t index)

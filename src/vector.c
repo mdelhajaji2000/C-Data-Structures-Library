@@ -85,74 +85,61 @@ size_t Vector_GetElementSize(const Vector *v)
     return v->_element_size;
 }
 
-Vector *Vector_Create(size_t size, size_t element_size)
+VectorStatus Vector_Create(size_t size, size_t element_size, Vector **out_vector)
 {
-    if (element_size == 0)
+    if (out_vector == NULL || element_size == 0)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_Create");
-        return NULL;
+        return VECTOR_INVALID_ARGUMENT;
     }
+    *out_vector = NULL;
     if (size > SIZE_MAX / element_size)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_SIZE_OVERFLOW, "Vector_Create");
-        return NULL;
+        return VECTOR_SIZE_OVERFLOW;
     }
     Vector *v = (Vector *)ds_malloc(sizeof(Vector));
-    if (v != NULL)
-    {
-        if (size > 0)
-            v->_data = ds_malloc(size * element_size);
-        else
-        {
-            v->_data = NULL;
-            v->_size = 0;
-            v->_element_size = element_size;
-            v->_capacity = 0;
-            return v;
-        }
-            
-        if (v->_data != NULL)
-        {
-            v->_size = 0;
-            v->_capacity = size;
-            v->_element_size = element_size;
-        }
-        else
-        {
-            ds_free(v);
-            v = NULL;
-            _VECTOR_STATUS_PRINTER(VECTOR_DATA_ALLOCATION_FAILURE, "Vector_Create");
-        }
-    }
-    else
+    if (v == NULL)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_ALLOCATION_FAILURE, "Vector_Create");
-        return NULL;
+        return VECTOR_ALLOCATION_FAILURE;
     }
-    
-    return v;
+    v->_data = size > 0 ? ds_malloc(size * element_size) : NULL;
+    if (size > 0 && v->_data == NULL)
+    {
+        ds_free(v);
+        _VECTOR_STATUS_PRINTER(VECTOR_DATA_ALLOCATION_FAILURE, "Vector_Create");
+        return VECTOR_DATA_ALLOCATION_FAILURE;
+    }
+    v->_size = 0;
+    v->_capacity = size;
+    v->_element_size = element_size;
+    *out_vector = v;
+    return VECTOR_SUCCESS;
 }
 
 
-void *Vector_GetAt(Vector *v, size_t index)
+VectorStatus Vector_GetAt(Vector *v, size_t index, void **out_value)
 {
-    if (!_Is_Vector_Valid(v))
+    if (!_Is_Vector_Valid(v) || out_value == NULL)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_INVALID_ARGUMENT, "Vector_GetAt");
-        return NULL;
+        return VECTOR_INVALID_ARGUMENT;
     }
+    *out_value = NULL;
     if (v->_data == NULL)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_EMPTY, "Vector_GetAt");
-        return NULL;
+        return VECTOR_EMPTY;
     }
     if (index >= v->_size)
     {
         _VECTOR_STATUS_PRINTER(VECTOR_INDEX_OUT_OF_RANGE, "Vector_GetAt");
-        return NULL;
+        return VECTOR_INDEX_OUT_OF_RANGE;
     }
 
-    return (char *)v->_data + (index * v->_element_size);
+    *out_value = (char *)v->_data + (index * v->_element_size);
+    return VECTOR_SUCCESS;
 }
 
 

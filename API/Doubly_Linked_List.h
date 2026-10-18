@@ -15,17 +15,17 @@ typedef enum {
     D_LS_INDEX_OUT_OF_RANGE = -5
 } DLinkedListStatus;
 
-DLinkedList* DList_Create(size_t element_size);
+DLinkedListStatus DList_Create(size_t element_size, DLinkedList **out_list);
 DLinkedListStatus DList_Destroy(DLinkedList* DList);
 size_t DList_GetSize(const DLinkedList* DList);
 size_t DList_GetElementSize(const DLinkedList* DList);
-void* DList_GetFirst(const DLinkedList *DList);
-void* DList_GetLast(const DLinkedList* DList);
-void* DList_GetAt(const DLinkedList* DList, size_t index);
+DLinkedListStatus DList_GetFirst(const DLinkedList *DList, void **out_value);
+DLinkedListStatus DList_GetLast(const DLinkedList* DList, void **out_value);
+DLinkedListStatus DList_GetAt(const DLinkedList* DList, size_t index, void **out_value);
 DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value);
 DLinkedListStatus DList_PushBack(DLinkedList* DList, void* value);
 DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index);
 DLinkedListStatus DList_PopFront(DLinkedList* DList);
 DLinkedListStatus DList_PopBack(DLinkedList* DList);
 DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index);
-DLinkedList* DList_Clear(DLinkedList* DList);
+DLinkedListStatus DList_Clear(DLinkedList* DList);
