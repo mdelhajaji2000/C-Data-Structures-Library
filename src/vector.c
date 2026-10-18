@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include "..\API\vector.h"
 #include "..\memory\memory.h"
 
@@ -49,11 +48,15 @@ size_t Vector_GetElementSize(const Vector *v)
 
 VectorStatus Vector_Create(size_t size, size_t element_size, Vector **out_vector)
 {
-    if (out_vector == NULL || element_size == 0)
+    if (out_vector == NULL)
     {
         return VECTOR_INVALID_ARGUMENT;
     }
     *out_vector = NULL;
+    if (element_size == 0)
+    {
+        return VECTOR_INVALID_ARGUMENT;
+    }
     if (size > SIZE_MAX / element_size)
     {
         return VECTOR_SIZE_OVERFLOW;
@@ -79,11 +82,15 @@ VectorStatus Vector_Create(size_t size, size_t element_size, Vector **out_vector
 
 VectorStatus Vector_GetAt(Vector *v, size_t index, void **out_value)
 {
-    if (!_Is_Vector_Valid(v) || out_value == NULL)
+    if (out_value == NULL)
     {
         return VECTOR_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (!_Is_Vector_Valid(v))
+    {
+        return VECTOR_INVALID_ARGUMENT;
+    }
     if (v->_data == NULL)
     {
         return VECTOR_EMPTY;

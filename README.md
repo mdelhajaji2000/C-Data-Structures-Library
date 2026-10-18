@@ -27,6 +27,9 @@ Each module retains its own status enum. Stack translates linked-list errors
 into `StackStatus` values, including separate statuses for list allocation,
 node data allocation, and index errors.
 
+`Stack_Destroy` releases a stack and its backing linked list. Vector and list
+destroy functions treat a `NULL` handle as a successful no-op.
+
 Queue is not currently present in this repository, so there is no Queue API to
 refactor yet.
 

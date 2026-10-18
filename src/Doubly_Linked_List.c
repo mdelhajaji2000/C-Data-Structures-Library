@@ -1,7 +1,6 @@
 #include "..\API\Doubly_Linked_List.h"
 #include "..\memory\memory.h"
 
-#include <stdio.h>
 #include <string.h>
 
 typedef struct _node 
@@ -23,11 +22,15 @@ typedef struct DLinkedList
 
 DLinkedListStatus DList_Create(size_t element_size, DLinkedList **out_list)
 {
-    if (out_list == NULL || element_size == 0)
+    if (out_list == NULL)
     {
         return D_LS_INVALID_ARGUMENT;
     }
     *out_list = NULL;
+    if (element_size == 0)
+    {
+        return D_LS_INVALID_ARGUMENT;
+    }
 
     DLinkedList* DList = ds_malloc(sizeof(DLinkedList));
     if (DList == NULL)
@@ -83,13 +86,17 @@ size_t DList_GetElementSize(const DLinkedList *DList)
     return DList->_element_size;
 }
 
- DLinkedListStatus DList_GetFirst(const DLinkedList *DList, void **out_value)
+DLinkedListStatus DList_GetFirst(const DLinkedList *DList, void **out_value)
 {
-    if (DList == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (DList == NULL)
+    {
+        return D_LS_INVALID_ARGUMENT;
+    }
 
     if (DList->_head == NULL)
     {
@@ -102,11 +109,15 @@ size_t DList_GetElementSize(const DLinkedList *DList)
 
 DLinkedListStatus DList_GetLast(const DLinkedList* DList, void **out_value)
 {
-    if (DList == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (DList == NULL)
+    {
+        return D_LS_INVALID_ARGUMENT;
+    }
 
     if (DList->_tail == NULL)
     {
@@ -119,11 +130,15 @@ DLinkedListStatus DList_GetLast(const DLinkedList* DList, void **out_value)
 
 DLinkedListStatus DList_GetAt(const DLinkedList* DList, size_t index, void **out_value)
 {
-    if (DList == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return D_LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (DList == NULL)
+    {
+        return D_LS_INVALID_ARGUMENT;
+    }
     if (index >= DList->_size)
     {
         return D_LS_INDEX_OUT_OF_RANGE;
@@ -143,7 +158,7 @@ DLinkedListStatus DList_PushFront(DLinkedList *DList, void* value)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (value == NULL)
     {
@@ -185,7 +200,7 @@ DLinkedListStatus DList_PushBack(DLinkedList* DList, void* value)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (value == NULL)
     {
@@ -226,7 +241,7 @@ DLinkedListStatus DList_InsertAt(DLinkedList* DList, void* value, size_t index)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (value == NULL)
     {
@@ -274,14 +289,14 @@ DLinkedListStatus DList_PopFront(DLinkedList* DList)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (DList->_head == NULL)
-        return D_LS_SUCCESS;
+        return D_LS_EMPTY;
 
     if (DList->_head == DList->_tail)
     {
-        ds_free(DList->_head);
+        ds_free(DList->_head->_data);
         ds_free(DList->_head);
         DList->_head = NULL;
         DList->_tail = NULL;
@@ -303,10 +318,10 @@ DLinkedListStatus DList_PopBack(DLinkedList* DList)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (DList->_tail == NULL)
-        return D_LS_SUCCESS;
+        return D_LS_EMPTY;
 
     if (DList->_head == DList->_tail)
     {
@@ -332,7 +347,7 @@ DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index)
 {
     if (DList == NULL)
     {
-        return D_LS_EMPTY;
+        return D_LS_INVALID_ARGUMENT;
     }
     if (index >= DList->_size)
     {
@@ -348,7 +363,7 @@ DLinkedListStatus DList_DeleteAt(DLinkedList* DList, size_t index)
         return DList_PopBack(DList);
 
     _node* currrent = DList->_head;
-    for (int i = 0; i < index; i++)
+    for (size_t i = 0; i < index; i++)
     {
         currrent = currrent->_next;
     }

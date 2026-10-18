@@ -1,5 +1,4 @@
 #include "..\API\linked_list.h"
-#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -42,11 +41,15 @@ bool List_Is_Empty(const LinkedList *List)
 
 LinkedListStatus List_Create(size_t element_size, LinkedList **out_list)
 {
-    if (out_list == NULL || element_size == 0)
+    if (out_list == NULL)
     {
         return LS_INVALID_ARGUMENT;
     }
     *out_list = NULL;
+    if (element_size == 0)
+    {
+        return LS_INVALID_ARGUMENT;
+    }
     LinkedList *List = (LinkedList *)ds_malloc(sizeof(LinkedList));
     if (List == NULL)
     {
@@ -153,11 +156,15 @@ LinkedListStatus List_PushBack(LinkedList *List, void *value)
 
 LinkedListStatus List_GetLast(const LinkedList* List, void **out_value)
 {
-    if (List == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (List == NULL)
+    {
+        return LS_INVALID_ARGUMENT;
+    }
     if (List->_tail == NULL)
     {
         return LS_EMPTY;
@@ -168,11 +175,15 @@ LinkedListStatus List_GetLast(const LinkedList* List, void **out_value)
 
 LinkedListStatus List_GetFirst(const LinkedList* List, void **out_value)
 {
-    if (List == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (List == NULL)
+    {
+        return LS_INVALID_ARGUMENT;
+    }
     if (List->_head == NULL)
     {
         return LS_EMPTY;
@@ -196,11 +207,15 @@ bool List_IsLast(const LinkedList *List, const void* element)
 
 LinkedListStatus List_GetAt(LinkedList* List, size_t index, void **out_value)
 {
-    if (List == NULL || out_value == NULL)
+    if (out_value == NULL)
     {
         return LS_INVALID_ARGUMENT;
     }
     *out_value = NULL;
+    if (List == NULL)
+    {
+        return LS_INVALID_ARGUMENT;
+    }
     if (List->_tail == NULL)
     {
         return LS_EMPTY;
